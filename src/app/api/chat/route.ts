@@ -1,4 +1,4 @@
-import { streamText } from "ai";
+import { streamText, convertToModelMessages } from "ai";
 import { deepseek, DEEPSEEK_MODEL } from "@/lib/deepseek";
 import { searchKnowledge, formatContext } from "@/lib/rag";
 import { checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
@@ -27,31 +27,35 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { messages } = await req.json();
+    const body = await req.json();
+    const uiMessages = body.messages;
 
-    if (!messages || !Array.isArray(messages)) {
+    if (!uiMessages || !Array.isArray(uiMessages)) {
       return Response.json(
         { error: "Invalid request: messages array required" },
         { status: 400 }
       );
     }
 
+    // Convert UI messages (parts-based) to model messages (content-based)
+    // The AI SDK v7 useChat sends UIMessages but streamText needs ModelMessages
+    const modelMessages = await convertToModelMessages(
+      uiMessages.map(({ id, ...rest }: any) => rest)
+    );
+
     // RAG: Extract last user message and search knowledge base
-    const lastUserMessage = [...messages]
+    const lastUserMessage = [...uiMessages]
       .reverse()
       .find((m: { role: string }) => m.role === "user");
 
     let systemWithContext = systemPrompt;
 
     if (lastUserMessage) {
-      // Handle both legacy `content` and new `parts` message formats
-      const query =
-        typeof lastUserMessage.content === "string"
-          ? lastUserMessage.content
-          : lastUserMessage.parts
-              ?.filter((p: { type: string }) => p.type === "text")
-              .map((p: { text: string }) => p.text)
-              .join(" ") ?? "";
+      // Extract text from UI message parts
+      const query = lastUserMessage.parts
+        ?.filter((p: { type: string }) => p.type === "text")
+        .map((p: { text: string }) => p.text)
+        .join(" ") ?? "";
 
       if (query) {
         try {
@@ -70,13 +74,13 @@ export async function POST(req: Request) {
     const result = streamText({
       model: deepseek(DEEPSEEK_MODEL),
       system: systemWithContext,
-      messages,
+      messages: modelMessages,
       temperature: 0.7,
       maxOutputTokens: 1000,
     });
 
     return result.toUIMessageStreamResponse({
-      originalMessages: messages,
+      originalMessages: uiMessages,
     });
   } catch (error) {
     console.error("Chat API error:", error);

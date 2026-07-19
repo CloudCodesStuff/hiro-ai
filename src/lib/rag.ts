@@ -1,15 +1,12 @@
 /**
- * Runtime RAG retrieval.
+ * Runtime RAG retrieval — serverless-compatible.
+ *
+ * Uses Transformers.js with onnxruntime-web (WASM) backend,
+ * which works on Vercel serverless without native dependencies.
  *
  * On first call, loads the pre-computed index and initializes
- * the Transformers.js embedding pipeline. Subsequent calls reuse
- * the cached pipeline and index (per serverless instance).
- *
- * Query flow:
- *   1. User question arrives
- *   2. Generate query embedding via Transformers.js
- *   3. Compute cosine similarity against all chunks
- *   4. Return top-k most relevant chunks
+ * the embedding pipeline. Subsequent calls reuse the cached
+ * pipeline and index (per serverless instance warm invocation).
  */
 
 import indexData from "../../data/index.json";
@@ -33,7 +30,9 @@ interface SearchResult {
 
 async function getEmbedder(): Promise<any> {
   if (!embedder) {
-    const { pipeline } = await import("@xenova/transformers");
+    // Force WASM backend for serverless compatibility
+    const { env, pipeline } = await import("@xenova/transformers");
+    env.backends.onnx.preferredBackend = "wasm";
     embedder = await pipeline(
       "feature-extraction",
       "Xenova/all-MiniLM-L6-v2",
@@ -104,9 +103,6 @@ export function formatContext(results: SearchResult[]): string {
   if (results.length === 0) return "";
 
   return results
-    .map(
-      (r, i) =>
-        `[Source: ${r.title}]\n${r.content}`
-    )
+    .map((r) => `[Source: ${r.title}]\n${r.content}`)
     .join("\n\n---\n\n");
 }
