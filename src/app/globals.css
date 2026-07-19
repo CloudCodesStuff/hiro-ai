@@ -18,11 +18,6 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -39,70 +34,54 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-sm: 0.4rem;
+  --radius-md: 0.6rem;
+  --radius-lg: 0.8rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.2rem;
 }
 
-/* HIRO — Premium Luxury Wellness Brand */
+/* HIRO — Pure black premium dark mode */
 :root {
-  --background: #fafaf8;
-  --foreground: #1a1d1b;
-  --card: #ffffff;
-  --card-foreground: #1a1d1b;
-  --popover: #ffffff;
-  --popover-foreground: #1a1d1b;
-  --primary: #2d5a3d;
+  --background: #000000;
+  --foreground: #f2f4f2;
+  --card: #080808;
+  --card-foreground: #f2f4f2;
+  --popover: #0a0a0a;
+  --popover-foreground: #f2f4f2;
+  --primary: #4a9c5c;
   --primary-foreground: #ffffff;
-  --secondary: #f0f4f1;
-  --secondary-foreground: #2d5a3d;
-  --muted: #f5f7f4;
-  --muted-foreground: #6b7b6f;
-  --accent: #e8f0ea;
-  --accent-foreground: #2d5a3d;
-  --destructive: #b91c1c;
-  --border: #e2e6e2;
-  --input: #e2e6e2;
-  --ring: #2d5a3d;
-  --chart-1: #2d5a3d;
-  --chart-2: #4a7c5c;
-  --chart-3: #8aad8a;
-  --chart-4: #a8c5a8;
-  --chart-5: #c4d8c4;
-  --radius: 0.75rem;
-  --sidebar: #f5f7f4;
-  --sidebar-foreground: #1a1d1b;
-  --sidebar-primary: #2d5a3d;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8f0ea;
-  --sidebar-accent-foreground: #2d5a3d;
-  --sidebar-border: #e2e6e2;
-  --sidebar-ring: #2d5a3d;
-}
-
-.dark {
-  --background: #0c0f0d;
-  --foreground: #e8ebe7;
-  --card: #141714;
-  --card-foreground: #e8ebe7;
-  --popover: #141714;
-  --popover-foreground: #e8ebe7;
-  --primary: #4a8c5c;
-  --primary-foreground: #ffffff;
-  --secondary: #1a221c;
-  --secondary-foreground: #e8ebe7;
-  --muted: #1a221c;
-  --muted-foreground: #7d8a7f;
-  --accent: #1a221c;
-  --accent-foreground: #e8ebe7;
+  --secondary: #0d0d0d;
+  --secondary-foreground: #f2f4f2;
+  --muted: #0d0d0d;
+  --muted-foreground: #9aa89c;
+  --accent: #0d0d0d;
+  --accent-foreground: #f2f4f2;
   --destructive: #ef4444;
   --border: rgba(255, 255, 255, 0.06);
   --input: rgba(255, 255, 255, 0.06);
-  --ring: #4a8c5c;
+  --ring: #4a9c5c;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #f2f4f2;
+  --card: #080808;
+  --card-foreground: #f2f4f2;
+  --popover: #0a0a0a;
+  --popover-foreground: #f2f4f2;
+  --primary: #4a9c5c;
+  --primary-foreground: #ffffff;
+  --secondary: #0d0d0d;
+  --secondary-foreground: #f2f4f2;
+  --muted: #0d0d0d;
+  --muted-foreground: #9aa89c;
+  --accent: #0d0d0d;
+  --accent-foreground: #f2f4f2;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.06);
+  --ring: #4a9c5c;
 }
 
 @layer base {
@@ -111,28 +90,29 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
   html {
     @apply font-sans;
   }
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #2d5a3d / 0.15;
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #2d5a3d / 0.25;
-}
+/* Premium scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
 
 ::selection {
-  background: #2d5a3d / 0.2;
-  color: inherit;
+  background: rgba(74, 156, 92, 0.3);
+  color: #fff;
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
 }

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2 } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
+import { ArrowUp, Loader2 } from "lucide-react";
 
 interface ChatInputProps {
   onSend: (message: string) => void;
@@ -21,7 +20,7 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`;
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 140)}px`;
   }, [input]);
 
   const handleSubmit = (e?: React.FormEvent) => {
@@ -44,30 +43,34 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
   };
 
   return (
-    <div className="shrink-0 border-t border-border/60 bg-card/80 backdrop-blur-sm px-4 py-3">
-      <form onSubmit={handleSubmit} className="mx-auto flex max-w-2xl items-end gap-2">
-        <Textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask HIRO anything..."
-          rows={1}
-          disabled={isLoading}
-          className="min-h-[44px] resize-none rounded-xl border-border bg-muted/50 text-sm placeholder:text-muted-foreground focus-visible:ring-primary"
-        />
-        <button
-          type="submit"
-          disabled={!input.trim() || isLoading}
-          className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-30"
-        >
-          {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Send className="h-4 w-4" />
-          )}
-        </button>
-      </form>
+    <div className="shrink-0 border-t border-white/[0.04] px-4 py-3">
+      <div className="mx-auto max-w-2xl">
+        <form onSubmit={handleSubmit} className="flex items-end gap-0">
+          <div className="relative flex-1 flex items-end">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Message HIRO..."
+              rows={1}
+              disabled={isLoading}
+              className="w-full resize-none rounded-2xl border border-white/[0.08] bg-white/[0.02] px-4 py-[14px] pr-[52px] text-[15px] text-white placeholder:text-white/20 focus:border-primary/30 focus:outline-none focus:ring-1 focus:ring-primary/20 disabled:opacity-40 transition-colors"
+            />
+            <button
+              type="submit"
+              disabled={!input.trim() || isLoading}
+              className="absolute bottom-[6px] right-[6px] flex h-[36px] w-[36px] items-center justify-center rounded-xl bg-white text-black transition-all hover:bg-white/90 disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ArrowUp className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
