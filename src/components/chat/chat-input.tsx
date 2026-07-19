@@ -13,17 +13,15 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-focus on mount
   useEffect(() => {
     textareaRef.current?.focus();
   }, []);
 
-  // Auto-resize textarea
   useEffect(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 160)}px`;
   }, [input]);
 
   const handleSubmit = (e?: React.FormEvent) => {
@@ -32,7 +30,6 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
     if (!trimmed || isLoading) return;
     onSend(trimmed);
     setInput("");
-    // Reset height
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -47,38 +44,30 @@ export function ChatInput({ onSend, isLoading }: ChatInputProps) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="border-t border-white/[0.08] bg-[#0d0d0d] p-4"
-    >
-      <div className="mx-auto flex max-w-3xl items-end gap-3">
-        <div className="relative flex-1">
-          <Textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask HIRO about fitness, nutrition, skincare, or anything transformation..."
-            rows={1}
-            disabled={isLoading}
-            className="min-h-[48px] resize-none rounded-xl border-white/[0.08] bg-white/[0.04] pr-12 text-sm text-white placeholder:text-neutral-500 focus-visible:border-amber-500/40 focus-visible:ring-amber-500/20"
-          />
-        </div>
+    <div className="shrink-0 border-t border-border/60 bg-card/80 backdrop-blur-sm px-4 py-3">
+      <form onSubmit={handleSubmit} className="mx-auto flex max-w-2xl items-end gap-2">
+        <Textarea
+          ref={textareaRef}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Ask HIRO anything..."
+          rows={1}
+          disabled={isLoading}
+          className="min-h-[44px] resize-none rounded-xl border-border bg-muted/50 text-sm placeholder:text-muted-foreground focus-visible:ring-primary"
+        />
         <button
           type="submit"
           disabled={!input.trim() || isLoading}
-          className="flex h-[48px] w-[48px] shrink-0 items-center justify-center rounded-xl bg-amber-500 text-neutral-900 transition-all hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-30"
         >
           {isLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
+            <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <Send className="h-5 w-5" />
+            <Send className="h-4 w-4" />
           )}
         </button>
-      </div>
-      <p className="mt-2 text-center text-[11px] text-neutral-600">
-        HIRO AI provides wellness guidance, not medical advice.
-      </p>
-    </form>
+      </form>
+    </div>
   );
 }

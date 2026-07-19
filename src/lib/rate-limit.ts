@@ -1,6 +1,5 @@
-// In-memory rate limiter for serverless environments.
-// Resets when the function instance cold-starts, which is acceptable
-// for basic abuse protection without external dependencies.
+// Daily rate limiter — in-memory, IP-based, resets every 24 hours.
+// Simple serverless-compatible implementation with basic abuse protection.
 
 interface RateLimitEntry {
   count: number;
@@ -9,7 +8,7 @@ interface RateLimitEntry {
 
 const store = new Map<string, RateLimitEntry>();
 
-// Clean up expired entries periodically
+// Clean up expired entries every 5 minutes
 setInterval(() => {
   const now = Date.now();
   for (const [key, entry] of store) {
@@ -17,63 +16,83 @@ setInterval(() => {
       store.delete(key);
     }
   }
-}, 60_000);
+}, 300_000);
 
-export interface RateLimitConfig {
-  /** Max requests allowed in the window */
-  maxRequests: number;
-  /** Window duration in milliseconds */
-  windowMs: number;
+const DAILY_LIMIT = 20;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function getResetTime(): number {
+  // Reset at midnight UTC
+  const now = new Date();
+  const midnight = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)
+  );
+  return midnight.getTime();
 }
 
-const DEFAULT_CONFIG: RateLimitConfig = {
-  maxRequests: 20,
-  windowMs: 60_000, // 1 minute
-};
-
 /**
- * Check if a request should be rate limited.
- * Returns true if the request is allowed, false if limited.
+ * Check if a request is within the daily rate limit.
  */
-export function checkRateLimit(
-  identifier: string,
-  config: Partial<RateLimitConfig> = {}
-): { allowed: boolean; remaining: number; resetAt: number } {
-  const { maxRequests, windowMs } = { ...DEFAULT_CONFIG, ...config };
+export function checkDailyLimit(identifier: string): {
+  allowed: boolean;
+  remaining: number;
+  limit: number;
+  resetAt: number;
+} {
   const now = Date.now();
   const entry = store.get(identifier);
 
-  // No existing entry or window expired — create fresh
+  // No entry or window expired — fresh start
   if (!entry || now > entry.resetAt) {
-    const newEntry: RateLimitEntry = {
-      count: 1,
-      resetAt: now + windowMs,
-    };
-    store.set(identifier, newEntry);
-    return { allowed: true, remaining: maxRequests - 1, resetAt: newEntry.resetAt };
+    const resetAt = getResetTime();
+    store.set(identifier, { count: 1, resetAt });
+    return { allowed: true, remaining: DAILY_LIMIT - 1, limit: DAILY_LIMIT, resetAt };
   }
 
-  // Within window
+  // Within the window
   entry.count++;
+  const remaining = Math.max(0, DAILY_LIMIT - entry.count);
 
-  if (entry.count > maxRequests) {
-    return { allowed: false, remaining: 0, resetAt: entry.resetAt };
-  }
-
-  return { allowed: true, remaining: maxRequests - entry.count, resetAt: entry.resetAt };
+  return {
+    allowed: entry.count <= DAILY_LIMIT,
+    remaining,
+    limit: DAILY_LIMIT,
+    resetAt: entry.resetAt,
+  };
 }
 
 /**
- * Extract a rate-limit identifier from a Request.
- * Uses X-Forwarded-For header (Vercel) or falls back to a simple hash.
+ * Get remaining messages (doesn't increment count).
+ */
+export function getRemaining(identifier: string): {
+  remaining: number;
+  limit: number;
+  limitReached: boolean;
+} {
+  const now = Date.now();
+  const entry = store.get(identifier);
+
+  if (!entry || now > entry.resetAt) {
+    return { remaining: DAILY_LIMIT, limit: DAILY_LIMIT, limitReached: false };
+  }
+
+  const remaining = Math.max(0, DAILY_LIMIT - entry.count);
+  return {
+    remaining,
+    limit: DAILY_LIMIT,
+    limitReached: entry.count >= DAILY_LIMIT,
+  };
+}
+
+/**
+ * Extract identifier from request headers.
  */
 export function getRateLimitIdentifier(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) {
     return forwarded.split(",")[0].trim();
   }
-  // Fallback: use a session cookie or IP from request
-  const cookie = request.headers.get("cookie") ?? "";
-  // Simple hash for privacy — not perfect but sufficient for basic limiting
-  return `session:${cookie.slice(0, 50)}`;
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+  return "unknown";
 }

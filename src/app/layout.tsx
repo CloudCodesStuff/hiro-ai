@@ -17,9 +17,6 @@ export const metadata: Metadata = {
   title: "HIRO AI — Personal Transformation Coach",
   description:
     "Your AI-powered transformation coach for fitness, nutrition, skincare, haircare, and lifestyle. Built for busy adults 30+.",
-  icons: {
-    icon: "/favicon.ico",
-  },
 };
 
 export default function RootLayout({
@@ -30,9 +27,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="h-full bg-[#0a0a0a] text-neutral-200 antialiased">
+      <body className="h-full bg-background text-foreground">
         <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>

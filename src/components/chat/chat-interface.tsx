@@ -1,23 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { ChatMessage } from "@/components/chat/chat-message";
 import { ChatInput } from "@/components/chat/chat-input";
 import {
-  MessageSquare,
-  Sparkles,
+  Leaf,
   Dumbbell,
   Apple,
   Droplets,
   Scissors,
   Heart,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const EXAMPLE_PROMPTS = [
   {
@@ -43,98 +38,114 @@ const EXAMPLE_PROMPTS = [
 ];
 
 export function ChatInterface() {
-  const { messages, status, sendMessage } = useChat({
+  const { messages, status, sendMessage, error } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isLoading = status === "streaming" || status === "submitted";
 
-  const handleSend = (text: string) => {
-    sendMessage({ text });
-  };
+  // Message limit state
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [limitReached, setLimitReached] = useState(false);
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Fetch remaining count on mount
+  useEffect(() => {
+    fetch("/api/limit")
+      .then((r) => r.json())
+      .then((d) => {
+        setRemaining(d.remaining);
+        setLimitReached(d.limitReached);
+      })
+      .catch(() => {});
+  }, [messages]);
+
+  const handleSend = useCallback(
+    (text: string) => {
+      sendMessage({ text });
+      // Optimistically decrement remaining
+      setRemaining((prev) => (prev !== null ? Math.max(0, prev - 1) : null));
+    },
+    [sendMessage]
+  );
 
   return (
-    <div className="flex h-full">
-      {/* Sidebar */}
-      <aside
-        className={`${
-          sidebarOpen ? "w-64" : "w-0"
-        } shrink-0 overflow-hidden border-r border-white/[0.06] bg-[#0d0d0d] transition-all duration-200`}
-      >
-        <div className="w-64 p-4">
-          <div className="flex items-center gap-2 mb-6">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500">
-              <Sparkles className="h-4 w-4 text-neutral-900" />
-            </div>
-            <span className="font-semibold text-white">HIRO AI</span>
+    <div className="flex h-full flex-col bg-background">
+      {/* Header */}
+      <header className="shrink-0 flex items-center justify-between border-b border-border/60 px-4 py-2.5">
+        <div className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary">
+            <Leaf className="h-3.5 w-3.5 text-primary-foreground" />
           </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="mb-4 w-full justify-start gap-2 border-white/[0.08] bg-white/[0.03] text-sm text-neutral-300 hover:bg-white/[0.06] hover:text-white"
-            onClick={() => window.location.reload()}
-          >
-            <MessageSquare className="h-4 w-4" />
-            New conversation
-          </Button>
-
-          <div className="mt-4">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-600">
-              Recent chats
-            </p>
-            <p className="mt-2 text-xs text-neutral-600">
-              Conversations are not persisted between sessions.
-            </p>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main chat area */}
-      <div className="flex flex-1 flex-col min-w-0">
-        {/* Sidebar toggle */}
-        <div className="absolute left-0 top-0 z-10 p-3">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="rounded-lg p-1.5 text-neutral-500 hover:bg-white/[0.05] hover:text-neutral-300 transition-colors"
-          >
-            {sidebarOpen ? (
-              <ChevronLeft className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
-          </button>
+          <span className="text-sm font-semibold tracking-tight text-foreground">
+            HIRO
+          </span>
         </div>
 
-        {/* Messages */}
-        <ScrollArea className="flex-1">
-          {messages.length === 0 ? (
-            <WelcomeScreen onSelect={handleSend} isLoading={isLoading} />
-          ) : (
-            <div className="pb-4">
-              {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
-              ))}
-              {isLoading && messages[messages.length - 1]?.role === "user" && (
-                <div className="flex items-center gap-3 px-4 py-6">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-500/20">
-                    <Sparkles className="h-4 w-4 animate-pulse text-amber-500" />
-                  </div>
-                  <div className="flex gap-1.5">
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-amber-500/60 [animation-delay:0ms]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-amber-500/60 [animation-delay:150ms]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-amber-500/60 [animation-delay:300ms]" />
-                  </div>
-                </div>
-              )}
-            </div>
+        {/* Message limit indicator */}
+        <div className="flex items-center gap-2">
+          {remaining !== null && (
+            <span
+              className={`text-[11px] tabular-nums ${
+                remaining <= 3
+                  ? "text-destructive"
+                  : remaining <= 5
+                    ? "text-amber-600"
+                    : "text-muted-foreground"
+              }`}
+            >
+              {remaining} / 20 remaining today
+            </span>
           )}
-        </ScrollArea>
+        </div>
+      </header>
 
-        {/* Input */}
-        <ChatInput onSend={handleSend} isLoading={isLoading} />
+      {/* Messages */}
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
+        {limitReached ? (
+          <LimitReachedScreen />
+        ) : messages.length === 0 ? (
+          <WelcomeScreen onSelect={handleSend} isLoading={isLoading} />
+        ) : (
+          <div className="pb-2">
+            {messages.map((message) => (
+              <ChatMessage key={message.id} message={message} />
+            ))}
+            {error && (
+              <div className="mx-4 my-2 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+                Something went wrong. Please try again.
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
       </div>
+
+      {/* Fixed input */}
+      <ChatInput onSend={handleSend} isLoading={isLoading || limitReached} />
+    </div>
+  );
+}
+
+function LimitReachedScreen() {
+  return (
+    <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-muted">
+        <Leaf className="h-6 w-6 text-muted-foreground" />
+      </div>
+      <h2 className="text-lg font-semibold text-foreground">
+        You&apos;ve reached today&apos;s limit
+      </h2>
+      <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+        Come back tomorrow for more conversations, or upgrade your HIRO
+        membership for unlimited access.
+      </p>
     </div>
   );
 }
@@ -147,12 +158,14 @@ function WelcomeScreen({
   isLoading: boolean;
 }) {
   return (
-    <div className="flex h-full flex-col items-center justify-center px-4 py-16">
-      <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10">
-        <Sparkles className="h-7 w-7 text-amber-500" />
+    <div className="flex h-full flex-col items-center justify-center px-4 py-12">
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10">
+        <Leaf className="h-6 w-6 text-primary" />
       </div>
-      <h1 className="mb-2 text-2xl font-semibold text-white">HIRO AI</h1>
-      <p className="mb-10 text-sm text-neutral-400">
+      <h1 className="mb-1 text-xl font-semibold tracking-tight text-foreground">
+        HIRO AI
+      </h1>
+      <p className="mb-8 text-sm text-muted-foreground">
         Your personal transformation coach
       </p>
 
@@ -162,14 +175,14 @@ function WelcomeScreen({
             key={i}
             onClick={() => onSelect(prompt.text)}
             disabled={isLoading}
-            className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-left transition-all hover:border-amber-500/30 hover:bg-white/[0.04] disabled:opacity-50"
+            className="flex items-start gap-3 rounded-xl border border-border bg-card p-3.5 text-left transition-all hover:border-primary/30 hover:bg-primary/[0.02] disabled:opacity-50"
           >
-            <prompt.icon className="mt-0.5 h-4 w-4 shrink-0 text-amber-500/70" />
+            <prompt.icon className="mt-0.5 h-4 w-4 shrink-0 text-primary/60" />
             <div>
-              <div className="text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+              <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
                 {prompt.label}
               </div>
-              <div className="mt-1 text-[13px] leading-relaxed text-neutral-400">
+              <div className="mt-0.5 text-[13px] leading-relaxed text-foreground/70">
                 {prompt.text}
               </div>
             </div>
@@ -177,15 +190,15 @@ function WelcomeScreen({
         ))}
       </div>
 
-      <div className="mt-12 flex items-center gap-6 text-[11px] text-neutral-600">
-        <div className="flex items-center gap-1.5">
+      <div className="mt-10 flex items-center gap-4 text-[11px] text-muted-foreground">
+        <div className="flex items-center gap-1">
           <Heart className="h-3 w-3" />
-          <span>Evidence-based advice</span>
+          <span>Evidence-based</span>
         </div>
-        <span>•</span>
-        <span>For busy adults 30+</span>
-        <span>•</span>
-        <span>No extreme diets</span>
+        <span>·</span>
+        <span>For adults 30+</span>
+        <span>·</span>
+        <span>Sustainable advice</span>
       </div>
     </div>
   );

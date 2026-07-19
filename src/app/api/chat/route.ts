@@ -1,28 +1,29 @@
 import { streamText, convertToModelMessages } from "ai";
 import { deepseek, DEEPSEEK_MODEL } from "@/lib/deepseek";
 import { searchKnowledge, formatContext } from "@/lib/rag";
-import { checkRateLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
+import { checkDailyLimit, getRateLimitIdentifier } from "@/lib/rate-limit";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Load system prompt at module init (cached across invocations)
 const systemPrompt = readFileSync(
   join(process.cwd(), "prompts", "system.txt"),
   "utf-8"
 );
 
 export async function POST(req: Request) {
-  // Rate limiting
   const identifier = getRateLimitIdentifier(req);
-  const { allowed } = checkRateLimit(identifier, {
-    maxRequests: 20,
-    windowMs: 60_000,
-  });
+  const limit = checkDailyLimit(identifier);
 
-  if (!allowed) {
+  if (!limit.allowed) {
     return Response.json(
-      { error: "Too many requests. Please wait a moment." },
-      { status: 429 }
+      { error: "Daily limit reached. Come back tomorrow." },
+      {
+        status: 429,
+        headers: {
+          "X-RateLimit-Remaining": String(limit.remaining),
+          "X-RateLimit-Limit": String(limit.limit),
+        },
+      }
     );
   }
 
@@ -38,7 +39,6 @@ export async function POST(req: Request) {
     }
 
     // Convert UI messages (parts-based) to model messages (content-based)
-    // The AI SDK v7 useChat sends UIMessages but streamText needs ModelMessages
     const modelMessages = await convertToModelMessages(
       uiMessages.map(({ id, ...rest }: any) => rest)
     );
@@ -51,7 +51,6 @@ export async function POST(req: Request) {
     let systemWithContext = systemPrompt;
 
     if (lastUserMessage) {
-      // Extract text from UI message parts
       const query = lastUserMessage.parts
         ?.filter((p: { type: string }) => p.type === "text")
         .map((p: { text: string }) => p.text)
@@ -59,14 +58,13 @@ export async function POST(req: Request) {
 
       if (query) {
         try {
-          const results = await searchKnowledge(query, 5, 0.3);
+          const results = await searchKnowledge(query, 5, 0.2);
           if (results.length > 0) {
             const context = formatContext(results);
-            systemWithContext = `${systemPrompt}\n\n## Relevant Knowledge\n\nThe following information from HIRO's knowledge base may help answer the member's question:\n\n${context}\n\nUse this information when relevant. If the member's question is not addressed by this content, rely on your general knowledge while staying true to HIRO's principles.`;
+            systemWithContext = `${systemPrompt}\n\n## Knowledge Context\n\nRelevant information from HIRO's knowledge base:\n\n${context}\n\nUse this when relevant to the member's question. Stay natural and conversational.`;
           }
-        } catch (ragError) {
-          // RAG failure is non-fatal — fall back to base system prompt
-          console.error("RAG retrieval failed:", ragError);
+        } catch {
+          // RAG failure is non-fatal
         }
       }
     }
@@ -76,7 +74,7 @@ export async function POST(req: Request) {
       system: systemWithContext,
       messages: modelMessages,
       temperature: 0.7,
-      maxOutputTokens: 1000,
+      maxOutputTokens: 500,
     });
 
     return result.toUIMessageStreamResponse({
@@ -85,7 +83,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("Chat API error:", error);
     return Response.json(
-      { error: "An error occurred processing your request." },
+      { error: "Something went wrong. Please try again." },
       { status: 500 }
     );
   }
