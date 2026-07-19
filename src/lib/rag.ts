@@ -1,17 +1,15 @@
 /**
- * Runtime RAG retrieval — serverless-compatible.
+ * Runtime RAG retrieval — Vercel serverless compatible.
  *
- * Uses Transformers.js with onnxruntime-web (WASM) backend,
- * which works on Vercel serverless without native dependencies.
+ * Uses keyword-based retrieval on the pre-computed knowledge index.
+ * No embeddings at runtime — no ONNX, no native dependencies, no Transformers.js.
  *
- * On first call, loads the pre-computed index and initializes
- * the embedding pipeline. Subsequent calls reuse the cached
- * pipeline and index (per serverless instance warm invocation).
+ * The index is built at build time via `npm run index` and committed to the repo.
+ * At runtime, we search chunk text directly using keyword matching.
  */
 
 import indexData from "../../data/index.json";
 
-let embedder: any = null;
 let chunks: Chunk[] | null = null;
 
 interface Chunk {
@@ -21,25 +19,11 @@ interface Chunk {
   embedding: number[];
 }
 
-interface SearchResult {
+export interface SearchResult {
   title: string;
   source: string;
   content: string;
   score: number;
-}
-
-async function getEmbedder(): Promise<any> {
-  if (!embedder) {
-    // Force WASM backend for serverless compatibility
-    const { env, pipeline } = await import("@xenova/transformers");
-    env.backends.onnx.preferredBackend = "wasm";
-    embedder = await pipeline(
-      "feature-extraction",
-      "Xenova/all-MiniLM-L6-v2",
-      { quantized: true }
-    );
-  }
-  return embedder;
 }
 
 function getChunks(): Chunk[] {
@@ -49,17 +33,57 @@ function getChunks(): Chunk[] {
   return chunks;
 }
 
-function cosineSimilarity(a: number[], b: number[]): number {
-  let dot = 0;
-  let normA = 0;
-  let normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
-  }
-  if (normA === 0 || normB === 0) return 0;
-  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+/**
+ * Simple keyword-based retrieval.
+ * Scores chunks by term overlap with the query.
+ */
+function keywordRetrieve(
+  query: string,
+  allChunks: Chunk[],
+  topK: number,
+  minScore: number
+): SearchResult[] {
+  const queryLower = query.toLowerCase();
+  const queryTerms = queryLower.split(/\s+/).filter((t) => t.length > 1);
+
+  if (queryTerms.length === 0) return [];
+
+  const scored = allChunks.map((chunk) => {
+    const contentLower = chunk.content.toLowerCase();
+    let score = 0;
+
+    // Count individual term matches
+    for (const term of queryTerms) {
+      if (contentLower.includes(term)) {
+        score += 1;
+      }
+    }
+
+    // Bonus for the full phrase appearing
+    if (contentLower.includes(queryLower)) {
+      score += 3;
+    }
+
+    // Bonus for title match
+    if (chunk.title.toLowerCase().includes(queryLower)) {
+      score += 2;
+    }
+
+    // Normalize by content length (favor concise, relevant chunks)
+    const normalizedScore = score / Math.log(contentLower.length + 1);
+
+    return {
+      title: chunk.title,
+      source: chunk.source,
+      content: chunk.content,
+      score: normalizedScore,
+    };
+  });
+
+  return scored
+    .filter((r) => r.score >= minScore)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, topK);
 }
 
 /**
@@ -69,31 +93,10 @@ function cosineSimilarity(a: number[], b: number[]): number {
 export async function searchKnowledge(
   query: string,
   topK: number = 5,
-  minScore: number = 0.3
+  minScore: number = 0.1
 ): Promise<SearchResult[]> {
-  const pipeline = await getEmbedder();
   const allChunks = getChunks();
-
-  // Generate query embedding
-  const output = await pipeline(query, {
-    pooling: "mean",
-    normalize: true,
-  });
-  const queryEmbedding = Array.from(output.data) as number[];
-
-  // Compute similarity against all chunks
-  const scored = allChunks
-    .map((chunk) => ({
-      title: chunk.title,
-      source: chunk.source,
-      content: chunk.content,
-      score: cosineSimilarity(queryEmbedding, chunk.embedding),
-    }))
-    .filter((r) => r.score >= minScore)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, topK);
-
-  return scored;
+  return keywordRetrieve(query, allChunks, topK, minScore);
 }
 
 /**

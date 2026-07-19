@@ -1,6 +1,8 @@
 import { createOpenAI } from "@ai-sdk/openai";
 
-// DeepSeek is OpenAI-compatible — configure via baseURL
+// DeepSeek uses OpenAI-compatible Chat Completions API.
+// deepseek.chat("model") → /v1/chat/completions (what DeepSeek supports)
+// deepseek("model")     → /v1/responses (DeepSeek doesn't support this)
 export const deepseek = createOpenAI({
   baseURL: "https://api.deepseek.com/v1",
   apiKey: process.env.DEEPSEEK_API_KEY ?? "",

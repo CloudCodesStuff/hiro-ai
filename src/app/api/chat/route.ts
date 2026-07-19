@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     }
 
     const result = streamText({
-      model: deepseek(DEEPSEEK_MODEL),
+      model: deepseek.chat(DEEPSEEK_MODEL),
       system: systemWithContext,
       messages: modelMessages,
       temperature: 0.7,
