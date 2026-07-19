@@ -1,115 +1,119 @@
 # HIRO Products
 
-## Product Philosophy
-Every HIRO product is formulated in-house for adults 30+. No white-label, no marketing gimmicks — just evidence-based ingredients at effective concentrations. We manufacture everything ourselves to ensure quality and consistency.
+Every HIRO product is formulated for busy adults who want effective, no-nonsense solutions. No filler ingredients, no marketing gimmicks — just clinically guided actives in the right order.
 
 ---
 
-## H01 — The Foundation Serum
+## Individual Products
 
-**Product Name:** H01 Foundation Serum
-**Description:** Advanced multi-peptide and antioxidant serum designed for daily use. Supports collagen production, reduces fine lines, and protects against environmental damage.
-**Benefits:**
-- Stimulates collagen production for firmer skin
-- Reduces appearance of fine lines and wrinkles
-- Provides antioxidant protection against pollution and UV damage
-- Improves skin texture and tone
-- Lightweight, fast-absorbing formula
+### H01 Root Revival — Rosemary Scalp Protocol
 
-**Ingredients:**
-- Matrixyl 3000 (palmitoyl tripeptide-1, palmitoyl tetrapeptide-7)
-- Vitamin C (L-ascorbic acid, 15%)
-- Niacinamide (vitamin B3, 5%)
-- Hyaluronic acid (multi-weight for deep hydration)
-- Vitamin E (tocopherol)
-- Ferulic acid
-
-**Who it helps:** Anyone concerned with visible signs of aging, dull skin, or uneven texture. Ideal for first-time serum users and experienced skincare enthusiasts alike.
-
-**When to recommend:** When a member mentions fine lines, dullness, uneven skin tone, or wants to start an anti-aging routine. Also recommended as the foundation of any HIRO skincare stack.
-
-**How to use:** Apply 3-4 drops to clean, dry skin every morning. Follow with moisturizer and SPF. Can be used morning and evening for enhanced results.
-
+**Type:** Scalp Care
 **Price:** $44.00
-**Product URL:** https://hiroprotocol.com/products/h01-foundation-serum
+**Availability:** Sold out (reformulating)
+**Ratings:** 4.7★ (109 reviews)
+**Product URL:** https://hiroprotocol.com/products/hiro-h01-root
+
+**Description:** A rosemary-based scalp and hair oil formulated to support a healthier growth environment. Rosemary is studied for supporting the hair growth cycle, paired with nourishing botanical oils that strengthen strands and condition the scalp without grease or buildup.
+
+**Key ingredients:** Rosemary oil, botanical oil blend
+
+**Who it's for:** Anyone noticing early thinning, wanting to support scalp health, or looking to maintain hair density. Works for both men and women.
+
+**When to recommend:** Member asks about hair thinning, scalp health, or hair growth. Mention it's currently sold out but worth watching for the reformulated version.
+
+**How to use:** Apply to clean scalp, massage in, leave on. Use daily for best results.
 
 ---
 
-## H02 — Recovery Moisturizer
+### H02 Morning Glow — Vitamin C Tri-Lipid Serum
 
-**Product Name:** H02 Recovery Moisturizer
-**Description:** Ceramide-rich overnight recovery moisturizer that repairs skin barrier while you sleep. Formulated with skin-identical lipids and peptides for maximum overnight regeneration.
-**Benefits:**
-- Repairs compromised skin barrier
-- Deep hydration without greasiness
-- Supports overnight skin regeneration
-- Reduces morning puffiness and dullness
-- Suitable for all skin types
-
-**Ingredients:**
-- Ceramides (AP, NP, EOP)
-- Peptide complex
-- Squalane
-- Shea butter
-- Niacinamide
-- Panthenol (vitamin B5)
-- Cholesterol
-
-**Who it helps:** Anyone with dry, dehydrated, or stressed skin. Excellent for those using active ingredients (retinoids, exfoliants) that may compromise the skin barrier. Also ideal for those in dry climates or with indoor heating/AC exposure.
-
-**When to recommend:** When a member complains of dryness, tightness, irritation from actives, or wants a richer night cream. Pairs perfectly with H01 as a day/night system.
-
-**How to use:** Apply a pea-sized amount to face and neck as the last step of your evening routine. Use nightly for best results.
-
+**Type:** Face Treatment (Morning)
 **Price:** $44.00
-**Product URL:** https://hiroprotocol.com/products/h02-recovery-moisturizer
+**Availability:** Available (preorder)
+**Ratings:** 5.0★ (1 review — new product)
+**Product URL:** https://hiroprotocol.com/products/hiro-h02-glow
+
+**Description:** A morning face treatment built on a tri-lipid barrier complex and Vitamin C. It reinforces the skin barrier while Vitamin C helps brighten and defend against the oxidative stress of daily life. Lightweight and fast-absorbing, it sits clean under everything and sets up the rest of your day.
+
+**Key ingredients:** Tri-lipid barrier complex, Vitamin C
+
+**Who it's for:** Anyone wanting brighter, more even skin. Anyone starting or upgrading their morning skincare routine. Especially good for those dealing with dullness, uneven tone, or environmental damage.
+
+**When to recommend:** Member asks about skincare routines, brightening, vitamin C, morning products, or building a simple effective routine. This is the go-to morning product.
+
+**How to use:** Apply to clean, dry skin every morning. Follow with moisturizer and SPF. Lightweight enough to layer.
 
 ---
 
-## H03 — Renewal Scalp Treatment
+### H03 Night Repair — Ceramide Tri-Lipid Treatment
 
-**Product Name:** H03 Renewal Scalp Treatment
-**Description:** Daily-use scalp serum formulated to support healthy hair growth by optimizing scalp health. Contains clinically-studied ingredients that target follicle health and reduce scalp inflammation.
-**Benefits:**
-- Supports healthy hair growth cycle
-- Reduces scalp inflammation and irritation
-- Improves follicle health and function
-- Lightweight, non-greasy formula
-- Can be used alongside other hair loss treatments
-
-**Ingredients:**
-- Redensyl (targets hair follicle stem cells)
-- Capixyl (peptide + red clover extract)
-- Caffeine
-- Biotin
-- Niacinamide
-- Rosemary extract
-- Peppermint oil
-
-**Who it helps:** Anyone experiencing early signs of hair thinning or wanting to proactively support hair health. Suitable for both men and women. Works well alongside minoxidil or other prescribed treatments.
-
-**When to recommend:** When a member expresses concern about hair thinning, shedding, or wants to optimize hair health. Not a replacement for medical treatment of advanced hair loss — recommend seeing a dermatologist for significant loss.
-
-**How to use:** Apply 1ml (one dropper) directly to scalp, focusing on areas of concern. Massage in gently. Use once daily, ideally after showering on a clean scalp.
-
+**Type:** Face Treatment (Night)
 **Price:** $44.00
-**Product URL:** https://hiroprotocol.com/products/h03-renewal-scalp-treatment
+**Availability:** Available (preorder)
+**Ratings:** 4.7★ (106 reviews)
+**Product URL:** https://hiroprotocol.com/products/hiro-h03-restore
+
+**Description:** A night face treatment that pairs a tri-lipid barrier complex with ceramides to repair and replenish while you sleep. It restores the lipids skin loses through the day, easing dryness and tightness so you wake to calmer, smoother, more resilient skin.
+
+**Key ingredients:** Tri-lipid barrier complex, ceramides
+
+**Who it's for:** Anyone dealing with dry, tight, or stressed skin. Anyone using active ingredients that may compromise their skin barrier. Anyone who wants to wake up with better skin.
+
+**When to recommend:** Member mentions dry skin, barrier issues, night routine, or wants a moisturizer that actually repairs. Pairs perfectly with H02 for a complete day/night system.
+
+**How to use:** Apply as the last step of your evening routine. Use nightly. Works on its own or layered over other treatments.
 
 ---
 
-## Product Stacking Guide
+## Bundles (Save 10%)
 
-### Morning
-1. Cleanse
-2. H01 Foundation Serum
-3. Moisturizer
-4. SPF
+### The Skin System
 
-### Evening
-1. Double cleanse
-2. H01 Foundation Serum (optional PM use)
-3. H02 Recovery Moisturizer
-4. H03 Renewal Scalp Treatment (on clean scalp)
+**Type:** Grooming Set
+**Price:** $79.20 (normally $88.00 — save 10%)
+**Availability:** Available
+**Includes:** H02 Morning Glow + H03 Night Repair
+**Product URL:** https://hiroprotocol.com/products/hiro-skin-protocols
 
-### Product Compatibility
-All HIRO products are formulated to work together. There are no conflicts or contraindications between any HIRO products. If using prescription treatments, consult your dermatologist about layering order.
+**Description:** The complete skin routine, in two steps. H02 Morning Glow brightens and defends through the day; H03 Night Repair rebuilds the barrier overnight. Clinically guided actives, correctly sequenced, with nothing you don't need.
+
+**Who it's for:** Anyone who wants a complete, no-thinking-required skincare system. Best value for the skin routine. If someone asks about skincare and wants both morning and night coverage, this is the recommendation.
+
+---
+
+### The Complete System
+
+**Type:** Grooming Set
+**Price:** $118.80 (normally $132.00 — save 10%)
+**Availability:** Sold out (depends on H01 restock)
+**Includes:** H01 Root Revival + H02 Morning Glow + H03 Night Repair
+**Product URL:** https://hiroprotocol.com/products/hiro-complete-protocol
+
+**Description:** The whole HIRO routine, in one box. H01 Root Revival supports the scalp, H02 Morning Glow brightens and defends skin by day, and H03 Night Repair rebuilds the barrier at night. Scalp to skin, morning to night, correctly dosed.
+
+**Who it's for:** Someone who wants everything — scalp, skin, morning, night. The full transformation protocol. Currently sold out due to H01 being reformulated.
+
+---
+
+## Product Recommendation Logic
+
+### When to naturally mention products:
+
+| User says... | Recommend |
+|---|---|
+| "skincare routine" / "where do I start with skin" | The Skin System or H02 + H03 |
+| "dull skin" / "uneven tone" / "vitamin C" | H02 Morning Glow |
+| "dry skin" / "night cream" / "barrier repair" | H03 Night Repair |
+| "thinning hair" / "scalp" / "hair loss" | H01 Root Revival (note: sold out, reformulating) |
+| "want everything" / "full routine" | The Complete System (note: sold out) |
+| "best value" / "bundle" / "save money" | The Skin System (in stock) |
+
+### How to recommend (natural, not salesy):
+
+- "Since you're looking to start a skincare routine, HIRO's Skin System is basically the whole thing in two steps — Morning Glow for daytime and Night Repair for overnight. $79 for both."
+- "The dryness you're describing is exactly what Night Repair was built for — it's a ceramide treatment that fixes your skin barrier while you sleep."
+- "If you're dealing with thinning, the Root Revival scalp serum is exactly what you'd want, but fair warning — it's sold out right now while they reformulate."
+
+### Subscribe & Save
+The site offers 10% off with subscription. When recommending products, you can mention: "They also do subscribe and save for 10% off if you want it on autopilot."
